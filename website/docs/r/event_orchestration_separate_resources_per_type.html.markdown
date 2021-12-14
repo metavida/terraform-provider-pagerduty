@@ -6,22 +6,26 @@ description: |-
   Creates and manages an Router associated with a Global Event Orchestration in PagerDuty.
 ---
 
-# Separate resources for each "type" of Orchestration path
+# Separate resources for each "type" of Orchestration path & rule
 
-In this example, we have separate resources for each "type" of Orchestration:
+In this example, we have separate resources for each "type" of Orchestration & Rule:
 
 * `pagerduty_event_orchestration_router` + `pagerduty_event_orchestration_router_rule`
 * `pagerduty_event_orchestration_unrouted` + `pagerduty_event_orchestration_unrouted_rule`
 * `pagerduty_event_orchestration_service` + `pagerduty_event_orchestration_service_rule`
 
+Note: We **could** try to introduce `pagerduty_event_orchestration_set` resources as well if that's a helpful abstraction.
 ## Pros
 
 * We have the option of providing different arguments per-type.
 * We have the option of documenting each type & which arguments it supports separately.
+* Rules don't need to be defined at the same time/place as the orchestration that contains them (allowing users to place rules closer to the items they're interacting with)
 
 ## Cons
 
 * More types of resources & that the user has to remember & keep separate.
+* Rules always need to be defined first & then composed together into a set, which can make it a bit challenging to read/understand an orchestration as a whole (maybe we tell users to use the web UI for this task?)
+* The Terraform provider will need to be able to compose the rules + `pagerduty_event_orchestration_router`/`_unrouted`/`_service` together into a single HTTP request somehow (i.e. it takes multiple resources to build a single HTTP API request)
 
 ## Example of configuring a Global Event Orchestration
 
