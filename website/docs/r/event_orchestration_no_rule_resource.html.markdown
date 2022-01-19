@@ -22,6 +22,7 @@ Rules are defined as attributes of the orchestration
 * We have the option of documenting each type & which arguments it supports separately.
 * Rules are defined together & in order, potentially making it easier for a user to be able to read the terraform & undrestand how the rules all operate together.
 * Each `pagerduty_event_orchestration_router`/`_unrouted`/`_service` resource encapsulates all data required to make a single HTTP API request.
+* Rule ordering is easy to manage (via the `sets[].rules` array)
 
 ## Cons
 
