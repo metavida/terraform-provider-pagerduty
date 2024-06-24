@@ -14,9 +14,15 @@ An Orchestration Router allows users to create a set of Event Rules. The Router 
 
 In this example the user has defined the Router with two rules, each routing to a different service.
 
-This example assumes services used in the `route_to` configuration already exists. So it does not show creation of service resource.
-
 ```hcl
+data "pagerduty_service" "database" {
+  name = "Primary Data Store"
+}
+
+data "pagerduty_service" "www" {
+  name = "Web Server App"
+}
+
 resource "pagerduty_event_orchestration_router" "router" {
   event_orchestration = pagerduty_event_orchestration.my_monitor.id
   set {
@@ -30,7 +36,7 @@ resource "pagerduty_event_orchestration_router" "router" {
         expression = "event.source matches regex 'db[0-9]+-server'"
       }
       actions {
-        route_to = pagerduty_service.database.id
+        route_to = data.pagerduty_service.database.id
       }
     }
     rule {
@@ -38,7 +44,7 @@ resource "pagerduty_event_orchestration_router" "router" {
         expression = "event.summary matches part 'www'"
       }
       actions {
-        route_to = pagerduty_service.www.id
+        route_to = data.pagerduty_service.www.id
       }
     }
   }
