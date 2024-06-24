@@ -88,6 +88,22 @@ The following arguments are supported:
 * `expression`- (Required) A [PCL condition](https://developer.pagerduty.com/docs/ZG9jOjM1NTE0MDc0-pcl-overview) string.
 
 ### Actions (`actions`) supports the following:
+
+#### Dynamic Routing
+
+Use the contents of an event payload to dynamically route an event to the target service. Note these setting can only be used once in the Router, and only in the first rule. The dynamic routing rule cannot have `conditions` nor a `route_to` action defined.
+
+* `dynamic_route_to` - (Required) supports the following:
+    * `source` - (Required) The path to a field in an event.
+    * `regex` - (Required) The regular expression, used to extract a value from the source field. Must use valid [RE2 regular expression](https://github.com/google/re2/wiki/Syntax) syntax.
+    * `lookup_by` - (Required) Indicates whether the extracted value from the source is a service's name or ID. Allowed values are: `service_name`, `service_id`
+
+If an event has a value at the specified `source`, and if the `regex` successfully matches the value, and if the matching portion is valid Service ID or Name, then the event will be routed to that service. Otherwise the event will be checked against any subsequent router rules.
+
+#### Service Route
+
+If an event matches this rule's conditions, then route it to the specified Service.
+
 * `route_to` - (Required) The ID of the target Service for the resulting alert.
 
 ### Catch All (`catch_all`) supports the following:
