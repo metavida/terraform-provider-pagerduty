@@ -12,7 +12,7 @@ An Orchestration Router allows users to create a set of Event Rules. The Router 
 
 ## Example of configuring Router rules for an Orchestration
 
-In this example the user has defined the Router with two rules, each routing to a different service.
+In this example the user has defined the Router with three rules. The first rule configures a dynamic route: any event containing a value in its `pd_service_id` custom detail will be routed to the Service with the ID specified by that value. The other rules route events matching a condition to specific services.
 
 ```hcl
 data "pagerduty_service" "database" {
@@ -27,6 +27,16 @@ resource "pagerduty_event_orchestration_router" "router" {
   event_orchestration = pagerduty_event_orchestration.my_monitor.id
   set {
     id = "start"
+    rule {
+      label = "Dynamically route events related to specific PagerDuty services"
+      actions {
+        dynamic_route_to = {
+          lookup_by = "service_id"
+          source = "event.custom_details.pd_service_id"
+          regexp = "(.*)"
+        }
+      }
+    }
     rule {
       label = "Events relating to our relational database"
       condition {
